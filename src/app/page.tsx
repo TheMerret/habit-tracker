@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import landing from '@/assets/img/Landing Image.png';
 
-export default function Home() {
+export default function Landing() {
   return (
     <>
       <header>
