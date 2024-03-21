@@ -20,7 +20,9 @@ export default function RootLayout({
       <head>
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
       </head>
-      <body className={inter.className + ' p-3'}>{children}</body>
+      <body className={inter.className}>
+        <div className="p-3 container">{children}</div>
+      </body>
     </html>
   );
 }

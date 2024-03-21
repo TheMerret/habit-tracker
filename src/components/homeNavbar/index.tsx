@@ -9,11 +9,15 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import Link from 'next/link';
-import { HomeIcon, FileIcon, PersonIcon } from '@radix-ui/react-icons';
+import {
+  HomeIcon,
+  PersonIcon,
+  ComponentInstanceIcon,
+} from '@radix-ui/react-icons';
 
 export const HomeNavbar: FunctionComponent = () => {
   return (
-    <NavigationMenu>
+    <NavigationMenu className="bg-zinc-100 rounded-3xl p-5">
       <NavigationMenuList>
         <NavigationMenuItem>
           <Link href="/home" legacyBehavior passHref>
@@ -24,10 +28,10 @@ export const HomeNavbar: FunctionComponent = () => {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/templates" legacyBehavior passHref>
+          <Link href="/habits" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              <FileIcon />
-              Шаблоны
+              <ComponentInstanceIcon />
+              Привычки
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
