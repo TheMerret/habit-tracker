@@ -1,6 +1,3 @@
-import { AlarmCard } from '@/components/alarmCard';
-import { CountCard } from '@/components/countCard';
-import { TimerCard } from '@/components/timerCard';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -20,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { EditCard } from '@/components/editCard';
 
 export default function Habits() {
   return (
@@ -75,9 +73,7 @@ export default function Habits() {
         </DropdownMenu>
       </div>
       <div className="flex flex-wrap gap-x-16 gap-y-6">
-        <AlarmCard />
-        <TimerCard />
-        <CountCard />
+        <EditCard />
       </div>
     </div>
   );

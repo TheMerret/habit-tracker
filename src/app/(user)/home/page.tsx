@@ -1,9 +1,8 @@
-import { AlarmCard } from '@/components/alarmCard';
-import { CountCard } from '@/components/countCard';
 import { HomeMenu } from '@/components/homeMenu';
+import { NumberCard } from '@/components/numberCard';
 import { ProgressWidget } from '@/components/progressWidget';
+import { StateCard } from '@/components/stateCard';
 import { StreakWidget } from '@/components/streakWidget';
-import { TimerCard } from '@/components/timerCard';
 
 export default function Home() {
   return (
@@ -14,9 +13,8 @@ export default function Home() {
       </div>
       <HomeMenu />
       <div className="flex flex-wrap gap-x-16 gap-y-6">
-        <AlarmCard />
-        <TimerCard />
-        <CountCard />
+        <NumberCard />
+        <StateCard />
       </div>
     </main>
   );

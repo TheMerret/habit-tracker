@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { FunctionComponent, useState } from 'react';
 import { HabitCategory, HabitPeriod, HabitType } from '@/lib/types';
-import { useForm } from 'react-hook-form';
+import { UseFormReturn, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -42,39 +42,101 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { format, setDefaultOptions } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { habitFormSchema } from '@/lib/schemas';
 setDefaultOptions({ locale: ru });
 
-const baseHabitSchema = z.object({
-  emoji: z.string().emoji().default('🎯'),
-  title: z
-    .string()
-    .min(2, { message: 'Название должно быть хотя бы из 2 символов' })
-    .max(50, { message: 'Максимум 50 символов' })
-    .default('Быть лучше!'),
-  notificationEnabled: z.boolean().default(false),
-  category: z.string().default('Другое'),
-  period: z.nativeEnum(HabitPeriod).default(HabitPeriod.daily),
-  addDate: z.coerce
-    .date()
-    .default(() => new Date())
-    .refine((d) => d >= new Date(new Date().toDateString()), {
-      message: 'Вы не можете отслеживать привычку из прошлого',
-    }),
-});
-const habitFormSchema = z.discriminatedUnion('type', [
-  baseHabitSchema.merge(
-    z.object({
-      type: z.literal(HabitType.count),
-      count: z.coerce.number().int().positive().default(1),
-    })
-  ),
-  baseHabitSchema.merge(
-    z.object({
-      type: z.literal(HabitType.done),
-      count: z.coerce.number().int().positive().default(1).optional(),
-    })
-  ),
-]);
+type FormValues = z.infer<typeof habitFormSchema>;
+
+export function EmojiControl({ form }: { form: UseFormReturn<FormValues> }) {
+  return (
+    <FormField
+      control={form.control}
+      name="emoji"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Иконка</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+          <FormDescription>
+            Этот эмодзи будет отображаться в списке привычек.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+export function TitleControl({ form }: { form: UseFormReturn<FormValues> }) {
+  return (
+    <FormField
+      control={form.control}
+      name="title"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Название</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+          <FormDescription>
+            Это название будет отображаться в списке привычек.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+export function NotificationControl({
+  form,
+}: {
+  form: UseFormReturn<FormValues>;
+}) {
+  return (
+    <FormField
+      control={form.control}
+      name="notificationEnabled"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Уведомления</FormLabel>
+          <FormControl>
+            <div>
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
+            </div>
+          </FormControl>
+          <FormDescription>
+            Получать уведомления о напоминании выполнения привычки.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+export function CountControl({ form }: { form: UseFormReturn<FormValues> }) {
+  return (
+    <FormField
+      control={form.control}
+      name="count"
+      shouldUnregister={true}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Количество</FormLabel>
+          <FormControl>
+            <Input {...field} type="number" min={1} />
+          </FormControl>
+          <FormDescription>
+            Сколько раз в день вы хотите выполнять привычку.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    ></FormField>
+  );
+}
 
 export const HabitForm: FunctionComponent = function () {
   const form = useForm<z.infer<typeof habitFormSchema>>({
@@ -96,59 +158,9 @@ export const HabitForm: FunctionComponent = function () {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="emoji"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Иконка</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormDescription>
-                Этот эмодзи будет отображаться в списке привычек.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Название</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormDescription>
-                Это название будет отображаться в списке привычек.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="notificationEnabled"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Уведомления</FormLabel>
-              <FormControl>
-                <div>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </div>
-              </FormControl>
-              <FormDescription>
-                Получать уведомления о напоминании выполнения привычки.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <EmojiControl form={form} />
+        <TitleControl form={form} />
+        <NotificationControl form={form} />
         <FormField
           control={form.control}
           name="category"
@@ -206,7 +218,6 @@ export const HabitForm: FunctionComponent = function () {
                   </Command>
                 </PopoverContent>
               </Popover>
-
               <FormDescription>
                 К какой категории относится привычка.
               </FormDescription>
@@ -267,25 +278,7 @@ export const HabitForm: FunctionComponent = function () {
             </FormItem>
           )}
         />
-        {watchType === 'count' ? (
-          <FormField
-            control={form.control}
-            name="count"
-            shouldUnregister={true}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Количество</FormLabel>
-                <FormControl>
-                  <Input {...field} type="number" min={1} />
-                </FormControl>
-                <FormDescription>
-                  Сколько раз в день вы хотите выполнять привычку.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          ></FormField>
-        ) : null}
+        {watchType === 'count' ? <CountControl form={form} /> : null}
         <FormField
           control={form.control}
           name="addDate"
@@ -320,7 +313,7 @@ export const HabitForm: FunctionComponent = function () {
                     ISOWeek
                     disabled={(date) => {
                       return (
-                        date < new Date(new Date().toDateString()) ||
+                        date < new Date('1980-01-01') ||
                         date > new Date('2100-01-01')
                       );
                     }}
