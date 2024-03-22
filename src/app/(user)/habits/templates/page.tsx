@@ -17,7 +17,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { EditCard } from '@/components/editCard';
+import { NumberCard } from '@/components/numberCard';
+import { StateCard } from '@/components/stateCard';
 
 export default function Habits() {
   return (
@@ -56,28 +57,10 @@ export default function Habits() {
             className="max-w-64 justify-self-start"
           />
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">Добавить</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Link href="/habits/templates" legacyBehavior passHref>
-                  Выбрать шаблон
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/habits/new" legacyBehavior passHref>
-                  Создать новую привычку
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
       <div className="flex flex-wrap gap-x-16 gap-y-6">
-        <EditCard />
+        <NumberCard template />
+        <StateCard template />
       </div>
     </div>
   );

@@ -16,7 +16,13 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
-export const StateCard: FunctionComponent = function () {
+interface StateCardProps {
+  template?: boolean;
+}
+
+export const StateCard: FunctionComponent<StateCardProps> = function ({
+  template = false,
+}) {
   const { id } = { id: 1 };
   const [done, setDone] = useState(false);
   return (
@@ -24,11 +30,13 @@ export const StateCard: FunctionComponent = function () {
       <CardHeader>
         <div className="flex flex-wrap justify-between content-center	">
           <div className="text-7xl">🛌</div>
-          {!done ? (
-            <PieChartIcon className="w-16 h-16" />
-          ) : (
-            <CheckCircledIcon className="w-16 h-16" />
-          )}
+          {!template ? (
+            !done ? (
+              <PieChartIcon className="w-16 h-16" />
+            ) : (
+              <CheckCircledIcon className="w-16 h-16" />
+            )
+          ) : null}
         </div>
       </CardHeader>
       <CardContent>
@@ -43,12 +51,16 @@ export const StateCard: FunctionComponent = function () {
         </div>
       </CardContent>
       <CardFooter className="flex gap-2">
-        <Checkbox
-          id={`done-${id}`}
-          checked={done}
-          onCheckedChange={(e) => setDone(!!e.valueOf())}
-        />
-        <Label htmlFor={`done-${id}`}>Готово</Label>
+        {!template ? (
+          <>
+            <Checkbox
+              id={`done-${id}`}
+              checked={done}
+              onCheckedChange={(e) => setDone(!!e.valueOf())}
+            />
+            <Label htmlFor={`done-${id}`}>Готово</Label>
+          </>
+        ) : null}
       </CardFooter>
     </Card>
   );
