@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { FunctionComponent, useState } from 'react';
-import { HabitCategory, HabitPeriod } from '@/lib/types';
+import { HabitCategory, HabitPeriod, HabitType } from '@/lib/types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -30,7 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
+import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 import {
   Select,
@@ -39,8 +39,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { format, setDefaultOptions } from 'date-fns';
+import { ru } from 'date-fns/locale';
+setDefaultOptions({ locale: ru });
 
-const habitFormSchema = z.object({
+const baseHabitSchema = z.object({
   emoji: z.string().emoji().default('🎯'),
   title: z
     .string()
@@ -50,13 +54,34 @@ const habitFormSchema = z.object({
   notificationEnabled: z.boolean().default(false),
   category: z.string().default('Другое'),
   period: z.nativeEnum(HabitPeriod).default(HabitPeriod.daily),
+  addDate: z.coerce
+    .date()
+    .default(() => new Date())
+    .refine((d) => d >= new Date(new Date().toDateString()), {
+      message: 'Вы не можете отслеживать привычку из прошлого',
+    }),
 });
+const habitFormSchema = z.discriminatedUnion('type', [
+  baseHabitSchema.merge(
+    z.object({
+      type: z.literal(HabitType.count),
+      count: z.coerce.number().int().positive().default(1),
+    })
+  ),
+  baseHabitSchema.merge(
+    z.object({
+      type: z.literal(HabitType.done),
+      count: z.coerce.number().int().positive().default(1).optional(),
+    })
+  ),
+]);
 
 export const HabitForm: FunctionComponent = function () {
   const form = useForm<z.infer<typeof habitFormSchema>>({
     resolver: zodResolver(habitFormSchema),
-    defaultValues: habitFormSchema.parse({}),
+    defaultValues: habitFormSchema.parse({ type: HabitType.done, count: 1 }),
   });
+  const watchType = form.watch('type');
   function onSubmit(values: z.infer<typeof habitFormSchema>) {
     console.log(values);
   }
@@ -70,7 +95,7 @@ export const HabitForm: FunctionComponent = function () {
   ]);
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="emoji"
@@ -110,10 +135,12 @@ export const HabitForm: FunctionComponent = function () {
             <FormItem>
               <FormLabel>Уведомления</FormLabel>
               <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <div>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </div>
               </FormControl>
               <FormDescription>
                 Получать уведомления о напоминании выполнения привычки.
@@ -135,7 +162,7 @@ export const HabitForm: FunctionComponent = function () {
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        'w-[200px] justify-between',
+                        'w-[200px] justify-between flex',
                         !field.value && 'text-muted-foreground'
                       )}
                     >
@@ -212,6 +239,103 @@ export const HabitForm: FunctionComponent = function () {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="type"
+          shouldUnregister={true}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Тип</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Выберите тип привычки" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="done">Качественная</SelectItem>
+                  <SelectItem value="count">Количественная</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                Какой тип привычки вы хотите отслеживать.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {watchType === 'count' ? (
+          <FormField
+            control={form.control}
+            name="count"
+            shouldUnregister={true}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Количество</FormLabel>
+                <FormControl>
+                  <Input {...field} type="number" min={1} />
+                </FormControl>
+                <FormDescription>
+                  Сколько раз в день вы хотите выполнять привычку.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          ></FormField>
+        ) : null}
+        <FormField
+          control={form.control}
+          name="addDate"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Дата начала отслеживания</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'w-[240px] pl-3 text-left font-normal',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, 'PPP')
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    locale={ru}
+                    ISOWeek
+                    disabled={(date) => {
+                      return (
+                        date < new Date(new Date().toDateString()) ||
+                        date > new Date('2100-01-01')
+                      );
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormDescription>
+                Выберите дату, с которой начнется отслеживание привычки.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type="submit">Готово</Button>
       </form>
     </Form>

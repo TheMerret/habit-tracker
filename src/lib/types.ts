@@ -8,3 +8,8 @@ export enum HabitPeriod {
   weekly = 'weekly',
   monthly = 'monthly',
 }
+
+export enum HabitType {
+  done = 'done',
+  count = 'count',
+}
