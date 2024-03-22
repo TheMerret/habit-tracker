@@ -8,15 +8,6 @@ import {
   SelectLabel,
   SelectItem,
 } from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { NumberCard } from '@/components/numberCard';
 import { StateCard } from '@/components/stateCard';
 
