@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import landing from '@/assets/img/Landing Image.png';
 
 export default function Landing() {
   return (
@@ -23,7 +22,7 @@ export default function Landing() {
           </p>
           <Button className="flex-none">Начать</Button>
         </article>
-        <Image src={landing} alt=""></Image>
+        <Image src={'/img/habits.png'} width={453} height={434} alt=""></Image>
       </main>
     </>
   );
