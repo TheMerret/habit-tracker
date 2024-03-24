@@ -16,6 +16,7 @@ import {
   TargetIcon,
   GearIcon,
   BarChartIcon,
+  ArchiveIcon,
 } from '@radix-ui/react-icons';
 import { ScoreWidget } from '@/components/scoreWidget';
 
@@ -53,6 +54,14 @@ export const HomeNavbar: FunctionComponent = () => {
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 <BarChartIcon />
                 Статистика
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <Link href="/shop" legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                <ArchiveIcon />
+                Магазин
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
