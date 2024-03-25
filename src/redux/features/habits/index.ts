@@ -18,8 +18,11 @@ export const habitsSlice = createSlice({
   name: 'habits',
   initialState,
   reducers: {
-    addHabit: (state, action: PayloadAction<Habit>) => {
-      state.habits.push(action.payload);
+    addHabit: (state, action: PayloadAction<Omit<Habit, 'id'>>) => {
+      const id = state.habits.length
+        ? Math.max(...state.habits.map((habit) => habit.id)) + 1
+        : 1;
+      state.habits.push({ ...action.payload, id });
     },
     removeHabit: (state, action: PayloadAction<number>) => {
       state.habits = state.habits.filter(

@@ -8,10 +8,9 @@ import {
   SelectLabel,
   SelectItem,
 } from '@/components/ui/select';
-import { NumberCard } from '@/components/numberCard';
-import { StateCard } from '@/components/stateCard';
+import { TemplateList } from '@/components/templateList';
 
-export default function Habits() {
+export default function Templates() {
   return (
     <div className="flex flex-col gap-y-3">
       <div className="flex flex-wrap justify-between">
@@ -49,10 +48,7 @@ export default function Habits() {
           />
         </div>
       </div>
-      <div className="flex flex-wrap gap-x-16 gap-y-6">
-        <NumberCard template />
-        <StateCard template />
-      </div>
+      <TemplateList />
     </div>
   );
 }
