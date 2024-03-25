@@ -1,7 +1,6 @@
+import { HomeList } from '@/components/homeList';
 import { NpcWidget } from '@/components/npcWidget';
-import { NumberCard } from '@/components/numberCard';
 import { ProgressWidget } from '@/components/progressWidget';
-import { StateCard } from '@/components/stateCard';
 import { StreakWidget } from '@/components/streakWidget';
 
 export default function Home() {
@@ -12,10 +11,7 @@ export default function Home() {
         <StreakWidget />
         <NpcWidget />
       </div>
-      <div className="flex flex-wrap gap-x-16 gap-y-6">
-        <NumberCard />
-        <StateCard />
-      </div>
+      <HomeList />
     </div>
   );
 }

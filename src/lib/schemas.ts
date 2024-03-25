@@ -74,6 +74,10 @@ export interface HabitAction {
   value?: number;
 }
 
+export interface AppHabitAction extends Omit<HabitAction, 'date'> {
+  date: string;
+}
+
 export interface DataToUpload {
   // данные о самих привычках
   habits: Habit[];
@@ -88,4 +92,10 @@ export interface HabitTemplate {
   period: 'daily' | 'weekly' | 'monthly';
   category: string;
   target?: number;
+}
+
+export interface HabitState {
+  habitId: number;
+  date: string;
+  value: number;
 }
