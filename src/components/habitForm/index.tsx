@@ -1,8 +1,8 @@
 'use client';
 
 import { z } from 'zod';
-import { FunctionComponent, useState } from 'react';
-import { HabitCategory, HabitPeriod, HabitType } from '@/lib/types';
+import { FunctionComponent } from 'react';
+import { HabitType } from '@/lib/types';
 import { UseFormReturn, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -43,6 +43,10 @@ import { Calendar } from '@/components/ui/calendar';
 import { format, setDefaultOptions } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { habitFormSchema } from '@/lib/schemas';
+import { useAppStore } from '@/redux/hooks';
+import { habitsActions } from '@/redux/features/habits';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 setDefaultOptions({ locale: ru });
 
 type FormValues = z.infer<typeof habitFormSchema>;
@@ -141,20 +145,38 @@ export function CountControl({ form }: { form: UseFormReturn<FormValues> }) {
 export const HabitForm: FunctionComponent = function () {
   const form = useForm<z.infer<typeof habitFormSchema>>({
     resolver: zodResolver(habitFormSchema),
-    defaultValues: habitFormSchema.parse({ type: HabitType.state, count: 1 }),
+    defaultValues: habitFormSchema.parse({
+      type: HabitType.state,
+      targetValue: 1,
+    }),
   });
   const watchType = form.watch('type');
+  const store = useAppStore();
+  const router = useRouter();
   function onSubmit(values: z.infer<typeof habitFormSchema>) {
-    console.log(values);
+    store.dispatch(
+      habitsActions.addHabit({
+        emoji: values.emoji,
+        title: values.title,
+        period: values.period,
+        category: values.category,
+        targetValue: values.targetValue,
+        addDate: values.addDate.toISOString(),
+        active: true,
+        notificationEnabled: values.notificationEnabled,
+      })
+    );
+    router.push('/habits');
+    toast('Привычка добавлена');
   }
-  const [categories, setCategories] = useState<HabitCategory[]>([
-    { id: 1, name: 'Другое' },
-    { id: 2, name: 'Спорт' },
-    { id: 3, name: 'Продуктивность' },
-    { id: 4, name: 'Здоровье' },
-    { id: 5, name: 'Образование' },
-    { id: 6, name: 'Развлечения' },
-  ]);
+  const categories = [
+    'Другое',
+    'Спорт',
+    'Продуктивность',
+    'Здоровье',
+    'Образование',
+    'Развлечения',
+  ];
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -179,7 +201,7 @@ export const HabitForm: FunctionComponent = function () {
                       )}
                     >
                       {field.value
-                        ? categories.find((c) => c.name === field.value)?.name
+                        ? categories.find((c) => c === field.value)
                         : 'Выберите категорию'}
                       <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -194,23 +216,23 @@ export const HabitForm: FunctionComponent = function () {
                     <CommandList>
                       <CommandEmpty>Создать новую категорию</CommandEmpty>
                       <CommandGroup>
-                        {categories.map((category) => (
+                        {categories.map((category, ind) => (
                           <CommandItem
-                            value={category.name}
-                            key={category.id}
+                            value={category}
+                            key={ind}
                             onSelect={() => {
-                              form.setValue('category', category.name);
+                              form.setValue('category', category);
                             }}
                           >
                             <CheckIcon
                               className={cn(
                                 'ml-auto h-4 w-4',
-                                category.name === field.value
+                                category === field.value
                                   ? 'opacity-100'
                                   : 'opacity-0'
                               )}
                             />
-                            {category.name}
+                            {category}
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -267,8 +289,10 @@ export const HabitForm: FunctionComponent = function () {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="done">Качественная</SelectItem>
-                  <SelectItem value="count">Количественная</SelectItem>
+                  <SelectItem value={HabitType.state}>Качественная</SelectItem>
+                  <SelectItem value={HabitType.number}>
+                    Количественная
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormDescription>

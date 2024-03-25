@@ -31,3 +31,7 @@ export const selectHabitById = createSelector(
   [selectHabitsModule, (_: unknown, id: number) => id],
   (module, id) => module.habits.find((h) => h.id === id)
 );
+export const selectCategories = createSelector(
+  selectHabitsModule,
+  (module) => [...new Set(module.habits.map((habit) => habit.category))]
+);
