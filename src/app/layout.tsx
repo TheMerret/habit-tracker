@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import './favicon.ico';
 import { StoreProvider } from '@/contexts/store-provider';
+import { Toaster } from '@/components/ui/sonner';
+import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,10 +23,11 @@ export default function RootLayout({
       <head>
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
       </head>
-      <body className={inter.className}>
+      <body className={cn(inter.className)}>
         <StoreProvider>
           <div className="p-3 container">{children}</div>
         </StoreProvider>
+        <Toaster />
       </body>
     </html>
   );

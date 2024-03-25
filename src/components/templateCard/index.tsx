@@ -8,9 +8,13 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ClockIcon, Crosshair2Icon, CubeIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { habitsActions } from '@/redux/features/habits';
 import { useRouter } from 'next/navigation';
+import { selectHabitById } from '@/redux/features/habits/selectors';
+import { habitFormSchema } from '@/lib/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 interface BaseCardProps {
   habitTitle: string;
@@ -50,11 +54,14 @@ export const TemplateCard: FunctionComponent<TemplateCardProps> = function ({
       onClick={() => {
         dispatch(
           habitsActions.addHabit({
+            emoji,
             title: habitTitle,
             period,
             category,
             targetValue: target,
-            addDate: new Date(),
+            addDate: new Date(new Date().toDateString()).toISOString(),
+            active: true,
+            notificationEnabled: false,
           })
         );
         router.push('/habits');

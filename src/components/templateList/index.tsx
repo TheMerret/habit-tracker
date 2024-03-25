@@ -4,7 +4,7 @@ import { habitsActions } from '@/redux/features/habits';
 import { selectTemplates } from '@/redux/features/habits/selectors';
 import { useAppSelector, useAppStore } from '@/redux/hooks';
 import { FC, useRef } from 'react';
-import { TemplateCard } from '@/components/habitCard';
+import { TemplateCard } from '@/components/templateCard';
 
 export const TemplateList: FC = function () {
   const store = useAppStore();

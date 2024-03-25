@@ -10,6 +10,6 @@ export enum HabitPeriod {
 }
 
 export enum HabitType {
-  done = 'done',
-  count = 'count',
+  state = 'state',
+  number = 'number',
 }

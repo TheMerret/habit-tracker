@@ -23,14 +23,14 @@ const baseHabitSchema = z.object({
 export const habitFormSchema = z.discriminatedUnion('type', [
   baseHabitSchema.merge(
     z.object({
-      type: z.literal(HabitType.count),
-      count: z.coerce.number().int().positive().default(1),
+      type: z.literal(HabitType.number),
+      targetValue: z.coerce.number().int().positive().default(1),
     })
   ),
   baseHabitSchema.merge(
     z.object({
-      type: z.literal(HabitType.done),
-      count: z.coerce.number().int().positive().default(1).optional(),
+      type: z.literal(HabitType.state),
+      targetValue: z.coerce.number().int().positive().default(1).optional(),
     })
   ),
 ]);
@@ -52,6 +52,15 @@ export interface Habit {
   // например, пройти 10000 шагов
   targetValue?: number;
 }
+
+export interface HabitMods {
+  emoji: string;
+  addDate: string;
+  active: boolean;
+  notificationEnabled: boolean;
+}
+
+export interface AppHabit extends Omit<Habit, 'addDate'>, HabitMods {}
 
 export interface HabitAction {
   // id привычки, чтобы связать с объектами Habit

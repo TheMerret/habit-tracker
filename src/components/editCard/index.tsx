@@ -8,12 +8,11 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import { TrashIcon } from '@radix-ui/react-icons';
+import { ClockIcon, CubeIcon, TrashIcon } from '@radix-ui/react-icons';
 import { Button } from '@/components/ui/button';
-import { habitFormSchema } from '@/lib/schemas';
+import { AppHabit, habitFormSchema } from '@/lib/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { HabitPeriod, HabitType } from '@/lib/types';
 import { Form } from '@/components/ui/form';
 import {
   CountControl,
@@ -21,45 +20,101 @@ import {
   NotificationControl,
   TitleControl,
 } from '@/components/habitForm';
+import { cn } from '@/lib/utils';
+import { HabitType } from '@/lib/types';
+import { useAppStore } from '@/redux/hooks';
+import { habitsActions } from '@/redux/features/habits';
+import { toast } from 'sonner';
+import { Badge } from '../ui/badge';
 
-export const EditCard: FunctionComponent = function () {
-  const habitData = {
-    emoji: '🛌',
-    title: 'Рано вставать',
-    notificationEnabled: false,
-    category: 'Здоровье',
-    period: HabitPeriod.daily,
-    type: HabitType.count,
-    addDate: '2024-03-22',
+interface HabitListCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  habit: AppHabit;
+}
+
+export const EditCard: FunctionComponent<HabitListCardProps> = function ({
+  habit: storedHabit,
+  ...props
+}) {
+  const habit = {
+    ...storedHabit,
+    type: storedHabit.targetValue ? HabitType.number : HabitType.state,
   };
+  const periodText =
+    habit.period === 'daily'
+      ? 'Ежедневно'
+      : habit.period == 'monthly'
+        ? 'Ежемесячно'
+        : 'Еженедельно';
   const form = useForm<z.infer<typeof habitFormSchema>>({
     resolver: zodResolver(habitFormSchema),
-    defaultValues: habitFormSchema.parse(habitData),
+    defaultValues: habitFormSchema.parse(habit),
   });
   const watchType = form.watch('type');
+  const store = useAppStore();
   function onSubmit(values: z.infer<typeof habitFormSchema>) {
-    console.log(values);
+    store.dispatch(
+      habitsActions.editHabit({
+        id: habit.id,
+        title: values.title,
+        category: values.category,
+        addDate: habit.addDate,
+        period: values.period,
+        targetValue: values.targetValue,
+        emoji: values.emoji,
+        active: habit.active,
+        notificationEnabled: values.notificationEnabled,
+      })
+    );
+    toast('Привычка изменена');
+  }
+  function archiveHabit() {
+    store.dispatch(
+      habitsActions.editHabit({
+        ...storedHabit,
+        active: false,
+      })
+    );
+    toast('Привычка перемещена в корзину');
   }
   return (
-    <Card className="w-[350px]">
-      <CardHeader></CardHeader>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <CardContent>
-            <EmojiControl form={form} />
-            <TitleControl form={form} />
-            <NotificationControl form={form} />
-            {watchType === 'count' ? <CountControl form={form} /> : null}
-          </CardContent>
-          <CardFooter className="flex gap-2">
-            <Button type="submit">Изменить</Button>
-            <Button>
-              <TrashIcon />
-              Убрать
-            </Button>
-          </CardFooter>
-        </form>
-      </Form>
-    </Card>
+    <>
+      {habit ? (
+        <Card {...props} className={cn('max-w-72', props.className)}>
+          <CardHeader></CardHeader>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-6 flex-1"
+            >
+              <CardContent>
+                <EmojiControl form={form} />
+                <TitleControl form={form} />
+                <NotificationControl form={form} />
+                {watchType === HabitType.number ? (
+                  <CountControl form={form} />
+                ) : null}
+              </CardContent>
+              <CardFooter className="flex flex-1  justify-end flex-col gap-2">
+                <div className="flex items-center flex-wrap gap-2">
+                  <Badge>
+                    <CubeIcon />
+                    <span>{habit.category}</span>
+                  </Badge>
+                  <Badge>
+                    <ClockIcon />
+                    <span>{periodText}</span>
+                  </Badge>
+                </div>
+                <Button type="submit">Изменить</Button>
+                <Button type="button" onClick={() => archiveHabit()}>
+                  <TrashIcon />
+                  Убрать
+                </Button>
+              </CardFooter>
+            </form>
+          </Form>
+        </Card>
+      ) : null}
+    </>
   );
 };

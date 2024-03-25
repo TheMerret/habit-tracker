@@ -120,7 +120,7 @@ export function CountControl({ form }: { form: UseFormReturn<FormValues> }) {
   return (
     <FormField
       control={form.control}
-      name="count"
+      name="targetValue"
       shouldUnregister={true}
       render={({ field }) => (
         <FormItem>
@@ -129,7 +129,7 @@ export function CountControl({ form }: { form: UseFormReturn<FormValues> }) {
             <Input {...field} type="number" min={1} />
           </FormControl>
           <FormDescription>
-            Сколько раз в день вы хотите выполнять привычку.
+            Сколько раз вы хотите выполнять привычку.
           </FormDescription>
           <FormMessage />
         </FormItem>
@@ -141,7 +141,7 @@ export function CountControl({ form }: { form: UseFormReturn<FormValues> }) {
 export const HabitForm: FunctionComponent = function () {
   const form = useForm<z.infer<typeof habitFormSchema>>({
     resolver: zodResolver(habitFormSchema),
-    defaultValues: habitFormSchema.parse({ type: HabitType.done, count: 1 }),
+    defaultValues: habitFormSchema.parse({ type: HabitType.state, count: 1 }),
   });
   const watchType = form.watch('type');
   function onSubmit(values: z.infer<typeof habitFormSchema>) {
@@ -278,7 +278,7 @@ export const HabitForm: FunctionComponent = function () {
             </FormItem>
           )}
         />
-        {watchType === 'count' ? <CountControl form={form} /> : null}
+        {watchType === HabitType.number ? <CountControl form={form} /> : null}
         <FormField
           control={form.control}
           name="addDate"

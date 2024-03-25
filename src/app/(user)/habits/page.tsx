@@ -25,6 +25,7 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import { TrashCard } from '@/components/trashCard';
+import { HabitsList } from '@/components/habitsList';
 
 export default function Habits() {
   return (
@@ -89,14 +90,16 @@ export default function Habits() {
           </DropdownMenu>
         </div>
         <TabsContent value="active">
-          <div className="flex flex-wrap gap-x-16 gap-y-6">
-            <EditCard />
-          </div>
+          <HabitsList
+            view="active"
+            className="flex flex-wrap gap-x-16 gap-y-6"
+          />
         </TabsContent>
         <TabsContent value="trash">
-          <div className="flex flex-wrap gap-x-16 gap-y-6">
-            <TrashCard />
-          </div>
+          <HabitsList
+            view="trash"
+            className="flex flex-wrap gap-x-16 gap-y-6"
+          />
         </TabsContent>
       </Tabs>
     </div>

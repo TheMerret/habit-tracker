@@ -1,9 +1,9 @@
-import { Habit, HabitAction, HabitTemplate } from '@/lib/schemas';
+import { AppHabit, Habit, HabitAction, HabitTemplate } from '@/lib/schemas';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import templates from '@/redux/features/habits/templates.json';
 
 export type HabitsState = {
-  habits: Habit[];
+  habits: AppHabit[];
   actions: HabitAction[];
   templates: HabitTemplate[];
 };
@@ -18,11 +18,17 @@ export const habitsSlice = createSlice({
   name: 'habits',
   initialState,
   reducers: {
-    addHabit: (state, action: PayloadAction<Omit<Habit, 'id'>>) => {
+    addHabit: (state, action: PayloadAction<Omit<AppHabit, 'id'>>) => {
       const id = state.habits.length
         ? Math.max(...state.habits.map((habit) => habit.id)) + 1
         : 1;
       state.habits.push({ ...action.payload, id });
+    },
+    editHabit: (state, action: PayloadAction<AppHabit>) => {
+      const habitIndex = state.habits.findIndex(
+        (habit) => habit.id === action.payload.id
+      );
+      state.habits[habitIndex] = action.payload;
     },
     removeHabit: (state, action: PayloadAction<number>) => {
       state.habits = state.habits.filter(
