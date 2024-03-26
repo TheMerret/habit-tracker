@@ -48,8 +48,9 @@ export const UploadHabitsForm: FunctionComponent = function () {
       let obj;
       try {
         obj = JSON.parse(content);
-      } catch {
+      } catch (e) {
         toast('Ошибка обработки данных');
+        console.error(e);
         return;
       }
       const dataToUpload: { habits: Habit[]; actions: HabitAction[] } = {
@@ -66,14 +67,15 @@ export const UploadHabitsForm: FunctionComponent = function () {
             notificationEnabled: false,
           });
         }
-        for (const a of obj.payload.actions) {
+        for (const a of obj.actions) {
           dataToUpload.actions.push({
             ...a,
             date: a.date.toString(),
           });
         }
-      } catch {
+      } catch (e) {
         toast('Ошибка обработки данных');
+        console.error(e);
         return;
       }
       store.dispatch(habitsActions.loadHabits(dataToUpload));
