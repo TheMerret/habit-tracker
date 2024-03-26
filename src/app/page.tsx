@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Landing() {
   return (
@@ -20,7 +21,9 @@ export default function Landing() {
             “Трекер Привычек” - это ваш личный помощник в формировании полезных
             привычек и отслеживании вашего ежедневного прогресса.
           </p>
-          <Button className="flex-none">Начать</Button>
+          <Button asChild className="flex-none">
+            <Link href={'/home'}>Начать</Link>
+          </Button>
         </article>
         <Image src={'/img/habits.png'} width={453} height={434} alt=""></Image>
       </main>
