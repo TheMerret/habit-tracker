@@ -15,6 +15,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { useAppStore } from '@/redux/hooks';
+import { habitsActions } from '@/redux/features/habits';
+import { Habit, HabitAction } from '@/lib/schemas';
+import { Action } from '@reduxjs/toolkit';
 
 const ACCEPTED_FILE_TYPES = ['application/json'];
 
@@ -30,8 +35,49 @@ export const UploadHabitsForm: FunctionComponent = function () {
   const form = useForm<z.infer<typeof uploadHabitsFormSchema>>({
     resolver: zodResolver(uploadHabitsFormSchema),
   });
+  const store = useAppStore();
   function onSubmit(data: z.infer<typeof uploadHabitsFormSchema>) {
-    console.log(data.file.name);
+    const fileReader = new FileReader();
+    fileReader.readAsText(data.file, 'UTF-8');
+    fileReader.onload = (e) => {
+      const content = e.target?.result;
+      if (typeof content !== 'string') {
+        toast('Ошибка чтения данных');
+        return;
+      }
+      let obj;
+      try {
+        obj = JSON.parse(content);
+      } catch {
+        toast('Ошибка обработки данных');
+        return;
+      }
+      const dataToUpload: { habits: Habit[]; actions: HabitAction[] } = {
+        habits: [],
+        actions: [],
+      };
+      try {
+        for (const h of obj.habits) {
+          dataToUpload.habits.push({
+            ...h,
+            addDate: h.addDate.toString(),
+            emoji: '🎯',
+            active: true,
+            notificationEnabled: false,
+          });
+        }
+        for (const a of obj.payload.actions) {
+          dataToUpload.actions.push({
+            ...a,
+            date: a.date.toString(),
+          });
+        }
+      } catch {
+        toast('Ошибка обработки данных');
+        return;
+      }
+      store.dispatch(habitsActions.loadHabits(dataToUpload));
+    };
   }
   return (
     <Form {...form}>

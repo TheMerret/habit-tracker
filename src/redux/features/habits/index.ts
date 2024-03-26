@@ -1,6 +1,8 @@
 import {
   AppHabit,
   AppHabitAction,
+  Habit,
+  HabitAction,
   HabitState,
   HabitTemplate,
 } from '@/lib/schemas';
@@ -78,6 +80,26 @@ export const habitsSlice = createSlice({
       state.states = state.states.filter(
         (state) => state.habitId !== action.payload
       );
+    },
+    loadHabits: (
+      state,
+      action: PayloadAction<{ habits: Habit[]; actions: HabitAction[] }>
+    ) => {
+      for (const h of action.payload.habits) {
+        state.habits.push({
+          ...h,
+          addDate: h.addDate.toString(),
+          emoji: '🎯',
+          active: true,
+          notificationEnabled: false,
+        });
+      }
+      for (const a of action.payload.actions) {
+        state.actions.push({
+          ...a,
+          date: a.date.toString(),
+        });
+      }
     },
   },
 });
