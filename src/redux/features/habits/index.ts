@@ -1,8 +1,6 @@
 import {
   AppHabit,
   AppHabitAction,
-  Habit,
-  HabitAction,
   HabitState,
   HabitTemplate,
 } from '@/lib/schemas';

@@ -43,10 +43,11 @@ import { Calendar } from '@/components/ui/calendar';
 import { format, setDefaultOptions } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { habitFormSchema } from '@/lib/schemas';
-import { useAppStore } from '@/redux/hooks';
+import { useAppSelector, useAppStore } from '@/redux/hooks';
 import { habitsActions } from '@/redux/features/habits';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { selectDateTime } from '@/redux/features/datetime/selectors';
 setDefaultOptions({ locale: ru });
 
 type FormValues = z.infer<typeof habitFormSchema>;
@@ -143,11 +144,15 @@ export function CountControl({ form }: { form: UseFormReturn<FormValues> }) {
 }
 
 export const HabitForm: FunctionComponent = function () {
+  const date = useAppSelector((state) =>
+    selectDateTime(state, new Date().toString())
+  );
   const form = useForm<z.infer<typeof habitFormSchema>>({
     resolver: zodResolver(habitFormSchema),
     defaultValues: habitFormSchema.parse({
       type: HabitType.state,
       targetValue: 1,
+      addDate: date,
     }),
   });
   const watchType = form.watch('type');

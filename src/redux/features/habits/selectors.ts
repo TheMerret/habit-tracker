@@ -56,6 +56,7 @@ export const selectHabitsFromDate = createSelector(
       const diff = Math.floor(
         (date.getTime() - addDate.getTime()) / (1000 * 60 * 60 * 24)
       );
+      if (diff < 0) return false;
       return diff % lap === 0;
     });
   }

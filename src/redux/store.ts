@@ -11,9 +11,11 @@ import {
 } from 'redux-persist';
 import { habitsReducer } from './features/habits';
 import defaultStorage from 'redux-persist/lib/storage';
+import { dateTimeReducer } from './features/datetime';
 
 const rootReducer = combineReducers({
   habits: habitsReducer,
+  dateTime: dateTimeReducer,
 });
 
 export const makeStore = () => {

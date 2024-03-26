@@ -1,8 +1,14 @@
+'use client';
+
 import { FunctionComponent } from 'react';
 import { Progress } from '@/components/ui/progress';
+import { useAppSelector } from '@/redux/hooks';
+import { selectDateTime } from '@/redux/features/datetime/selectors';
 
 export const ProgressWidget: FunctionComponent = function () {
-  const date = new Date();
+  const date = useAppSelector((state) =>
+    selectDateTime(state, new Date().toString())
+  );
   const formattedDate = Intl.DateTimeFormat('ru', {
     day: 'numeric',
     month: 'long',

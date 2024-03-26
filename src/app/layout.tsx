@@ -5,6 +5,7 @@ import './favicon.ico';
 import { StoreProvider } from '@/contexts/store-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
+import { DateTimeProvider } from '@/contexts/date-time';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className={cn(inter.className)}>
         <StoreProvider>
           <div className="p-3 container">{children}</div>
+          <DateTimeProvider />
         </StoreProvider>
         <Toaster />
       </body>

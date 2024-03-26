@@ -17,6 +17,7 @@ import {
   selectHabitState,
 } from '@/redux/features/habits/selectors';
 import { habitsActions } from '@/redux/features/habits';
+import { selectDateTime } from '@/redux/features/datetime/selectors';
 
 interface NumberCardProps extends React.HTMLAttributes<HTMLDivElement> {
   habit: AppHabit;
@@ -25,7 +26,9 @@ interface NumberCardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const NumberCard: FunctionComponent<NumberCardProps> = function ({
   habit,
 }) {
-  const date = new Date();
+  const date =
+    useAppSelector((state) => selectDateTime(state, new Date().toString())) ??
+    new Date();
   const state = useAppSelector((state) =>
     selectHabitState(state, habit.id, date.toDateString())
   );

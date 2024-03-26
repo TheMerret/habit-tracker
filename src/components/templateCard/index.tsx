@@ -11,10 +11,7 @@ import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { habitsActions } from '@/redux/features/habits';
 import { useRouter } from 'next/navigation';
-import { selectHabitById } from '@/redux/features/habits/selectors';
-import { habitFormSchema } from '@/lib/schemas';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { selectDateTime } from '@/redux/features/datetime/selectors';
 
 interface BaseCardProps {
   habitTitle: string;
@@ -36,6 +33,9 @@ export const TemplateCard: FunctionComponent<TemplateCardProps> = function ({
   target,
   ...props
 }) {
+  const date =
+    useAppSelector((state) => selectDateTime(state, new Date().toString())) ??
+    new Date();
   const periodText =
     period === 'daily'
       ? 'Ежедневно'
@@ -59,7 +59,7 @@ export const TemplateCard: FunctionComponent<TemplateCardProps> = function ({
             period,
             category,
             targetValue: target,
-            addDate: new Date(new Date().toDateString()).toISOString(),
+            addDate: new Date(date.toDateString()).toISOString(),
             active: true,
             notificationEnabled: false,
           })

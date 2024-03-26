@@ -21,6 +21,10 @@ import { Calendar } from '../ui/calendar';
 import { Input } from '../ui/input';
 import { format, setDefaultOptions } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { useAppSelector, useAppStore } from '@/redux/hooks';
+import { dateTimeActions } from '@/redux/features/datetime';
+import { toast } from 'sonner';
+import { selectDateTime } from '@/redux/features/datetime/selectors';
 setDefaultOptions({ locale: ru });
 
 const dateTimeFormSchema = z.object({
@@ -30,12 +34,22 @@ const dateTimeFormSchema = z.object({
 });
 
 export const DateTimeForm: FunctionComponent = function () {
+  const date = useAppSelector((state) =>
+    selectDateTime(state, new Date().toString())
+  );
   const form = useForm<z.infer<typeof dateTimeFormSchema>>({
     resolver: zodResolver(dateTimeFormSchema),
-    defaultValues: dateTimeFormSchema.parse({}),
+    defaultValues: dateTimeFormSchema.parse({ datetime: date }),
   });
+  const store = useAppStore();
   function onSubmit(data: z.infer<typeof dateTimeFormSchema>) {
-    console.log(data.datetime);
+    store.dispatch(
+      dateTimeActions.setNewDateTime({
+        newDateTime: data.datetime.toString(),
+        setAt: new Date().toString(),
+      })
+    );
+    toast('Время успешно изменено');
   }
   return (
     <Form {...form}>

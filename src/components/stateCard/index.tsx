@@ -22,6 +22,7 @@ import {
   selectHabitState,
 } from '@/redux/features/habits/selectors';
 import { habitsActions } from '@/redux/features/habits';
+import { selectDateTime } from '@/redux/features/datetime/selectors';
 
 interface StateCardProps extends React.HTMLAttributes<HTMLDivElement> {
   habit: AppHabit;
@@ -30,7 +31,9 @@ interface StateCardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const StateCard: FunctionComponent<StateCardProps> = function ({
   habit,
 }) {
-  const date = new Date();
+  const date =
+    useAppSelector((state) => selectDateTime(state, new Date().toString())) ??
+    new Date();
   const initialized = useRef(false);
   const state = useAppSelector((state) =>
     selectHabitState(state, habit.id, date.toDateString())
