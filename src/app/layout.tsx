@@ -6,6 +6,7 @@ import { StoreProvider } from '@/contexts/store-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { DateTimeProvider } from '@/contexts/date-time';
+import { NotificationManager } from '@/components/notificationManager';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -56,6 +57,7 @@ export default function RootLayout({
         <StoreProvider>
           <div className="p-3 container">{children}</div>
           <DateTimeProvider />
+          <NotificationManager />
         </StoreProvider>
         <Toaster />
       </body>
