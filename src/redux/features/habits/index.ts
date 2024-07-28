@@ -43,6 +43,8 @@ export const habitsSlice = createSlice({
       state.habits = state.habits.filter(
         (habit) => habit.id !== action.payload
       );
+      state.actions = state.actions.filter((a) => a.id !== action.payload);
+      state.states = state.states.filter((s) => s.habitId !== action.payload);
     },
     addAction: (state, action: PayloadAction<AppHabitAction>) => {
       state.actions.push(action.payload);

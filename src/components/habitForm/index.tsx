@@ -151,7 +151,6 @@ export const HabitForm: FunctionComponent = function () {
     resolver: zodResolver(habitFormSchema),
     defaultValues: habitFormSchema.parse({
       type: HabitType.state,
-      targetValue: 1,
       addDate: date,
     }),
   });
