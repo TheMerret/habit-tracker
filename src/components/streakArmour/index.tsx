@@ -20,6 +20,7 @@ export const StreakArmour: FC = function () {
   const coins = useAppSelector((state) => selectCoins(state));
   const isEnough = coins >= cost;
   function applyArmour() {
+    store.dispatch(gameActions.addCoins(-cost));
     store.dispatch(gameActions.setStreakArmour(true));
   }
   const callback = useCallback(() => {

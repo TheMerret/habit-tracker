@@ -31,3 +31,13 @@ export const selectStreakArmour = createSelector(
   selectGameModule,
   (module) => module.isStreakArmour
 );
+
+export const selectCurrentSkin = createSelector(
+  selectGameModule,
+  (module) => module.skins[module.currentSkin]
+);
+
+export const selectSkin = createSelector(
+  [selectGameModule, (state, skinId: number) => skinId],
+  (module, skinId) => module.skins[skinId]
+);

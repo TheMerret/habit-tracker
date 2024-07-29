@@ -1,11 +1,21 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
+interface Skin {
+  id: number;
+  name: string;
+  title: string;
+  isBought: boolean;
+  imagePath: string;
+}
+
 export interface GameState {
   coins: number;
   multiplier: number;
   petHealth: number;
   streakDays: number;
   isStreakArmour: boolean;
+  skins: Record<number, Skin>;
+  currentSkin: number;
 }
 
 const initialState: GameState = {
@@ -14,6 +24,37 @@ const initialState: GameState = {
   petHealth: 50,
   streakDays: 1,
   isStreakArmour: false,
+  skins: {
+    1: {
+      id: 1,
+      name: 'bunny',
+      title: 'Зайчик',
+      isBought: true,
+      imagePath: '/img/bunny.png',
+    },
+    2: {
+      id: 2,
+      name: 'cat',
+      title: 'Котейка',
+      isBought: false,
+      imagePath: '/img/cat.png',
+    },
+    3: {
+      id: 3,
+      name: 'dog',
+      title: 'Собака',
+      isBought: false,
+      imagePath: '/img/dog.png',
+    },
+    4: {
+      id: 4,
+      name: 'chicken',
+      title: 'Цыпленок',
+      isBought: false,
+      imagePath: '/img/chicken.png',
+    },
+  },
+  currentSkin: 1,
 };
 
 export const gameSlice = createSlice({
@@ -46,6 +87,26 @@ export const gameSlice = createSlice({
     },
     setStreakArmour: (state, action: PayloadAction<boolean>) => {
       state.isStreakArmour = action.payload;
+    },
+    setCurrentSkin: (
+      state,
+      action: PayloadAction<GameState['currentSkin']>
+    ) => {
+      if (action.payload in state.skins) {
+        state.currentSkin = action.payload;
+      }
+    },
+    updateSkin: (
+      state,
+      action: PayloadAction<{
+        skinId: Skin['id'];
+        data: Partial<Skin>;
+      }>
+    ) => {
+      if (action.payload.skinId in state.skins) {
+        const skin = state.skins[action.payload.skinId];
+        skin.isBought = action.payload.data.isBought ?? skin.isBought;
+      }
     },
   },
 });
