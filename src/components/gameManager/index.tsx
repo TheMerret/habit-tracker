@@ -2,6 +2,10 @@
 
 import { AppHabitAction } from '@/lib/schemas';
 import { gameActions } from '@/redux/features/game';
+import {
+  selectMultiplier,
+  selectStreakDays,
+} from '@/redux/features/game/selectors';
 import { selectActions } from '@/redux/features/habits/selectors';
 import { StatisticsState } from '@/redux/features/statistics';
 import { selectStatisticsEntries } from '@/redux/features/statistics/selectors';
@@ -46,12 +50,14 @@ const DoneHabitsInnerManager: FC<DoneHabitsInnerManagerProps> = function ({
   prevActions,
 }) {
   const store = useAppStore();
+  const multiplier = useAppSelector((state) => selectMultiplier(state));
   let count = 0;
   count += actions.length - prevActions.length;
   useEffect(() => {
     let ignore = false;
     if (!ignore) {
-      store.dispatch(gameActions.addCoins(count * 10));
+      store.dispatch(gameActions.addCoins(count * 10 * multiplier));
+      store.dispatch(gameActions.editPetHealth(count * 10));
     }
     return () => {
       ignore = true;
@@ -89,14 +95,28 @@ const MissedHabitsInnerManager: FC<MissedHabitsInnerManagerProps> = function ({
   prevStats,
 }) {
   const store = useAppStore();
+  const multiplier = useAppSelector((state) => selectMultiplier(state));
+  let newMultiplier = multiplier;
+  const streakDays = useAppSelector((state) => selectStreakDays(state));
+  let newStreakDays = streakDays;
   let missedCount = 0;
   for (let i = prevStats.length; i < stats.length; i++) {
-    missedCount += stats[i].missedCount;
+    const mc = stats[i].missedCount;
+    missedCount += mc;
+    if (mc) {
+      newMultiplier = 1;
+      newStreakDays = 1;
+    } else {
+      newMultiplier += 0.1;
+      newStreakDays += 1;
+    }
   }
   useEffect(() => {
     let ignore = false;
     if (!ignore) {
       store.dispatch(gameActions.addCoins(-missedCount * 10));
+      store.dispatch(gameActions.setMultiplier(newMultiplier));
+      store.dispatch(gameActions.setStreakDays(newStreakDays));
     }
     return () => {
       ignore = true;

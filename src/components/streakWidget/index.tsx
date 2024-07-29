@@ -1,9 +1,11 @@
 'use client';
 
+import { selectStreakDays } from '@/redux/features/game/selectors';
+import { useAppSelector } from '@/redux/hooks';
 import { FunctionComponent, useState } from 'react';
 
 export const StreakWidget: FunctionComponent = function () {
-  const [days, setDays] = useState(0);
+  const days = useAppSelector((state) => selectStreakDays(state));
   return (
     <div>
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
