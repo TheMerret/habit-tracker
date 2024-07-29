@@ -8,11 +8,11 @@ export const QuestList: FunctionComponent = function () {
         Квесты
       </h1>
       <span className="text-xl text-muted-foreground">
-        Выполняйте квесты зарабатывая очки
+        Выполняйте квесты зарабатывая монеты
       </span>
-      <QuestComponent />
-      <QuestComponent />
-      <QuestComponent />
+      <QuestComponent goal={100} multiplierAddition={0.3} />
+      <QuestComponent goal={500} multiplierAddition={0.5} />
+      <QuestComponent goal={1000} multiplierAddition={1} />
     </div>
   );
 };

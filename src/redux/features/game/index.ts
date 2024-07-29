@@ -27,6 +27,12 @@ export const gameSlice = createSlice({
     setMultiplier: (state, action: PayloadAction<number>) => {
       state.multiplier = Math.max(Math.min(action.payload, 10), 1);
     },
+    editMultiplier: (state, action: PayloadAction<number>) => {
+      if (action.payload) {
+        state.multiplier += action.payload;
+        state.multiplier = Math.max(Math.min(state.multiplier, 10), 1);
+      }
+    },
     editPetHealth: (state, action: PayloadAction<number>) => {
       if (action.payload) {
         state.petHealth += action.payload;
