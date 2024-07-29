@@ -26,3 +26,8 @@ export const selectStreakDays = createSelector(
   selectGameModule,
   (module) => module.streakDays
 );
+
+export const selectStreakArmour = createSelector(
+  selectGameModule,
+  (module) => module.isStreakArmour
+);

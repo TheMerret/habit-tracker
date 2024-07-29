@@ -5,6 +5,7 @@ export interface GameState {
   multiplier: number;
   petHealth: number;
   streakDays: number;
+  isStreakArmour: boolean;
 }
 
 const initialState: GameState = {
@@ -12,6 +13,7 @@ const initialState: GameState = {
   multiplier: 1,
   petHealth: 50,
   streakDays: 1,
+  isStreakArmour: false,
 };
 
 export const gameSlice = createSlice({
@@ -41,6 +43,9 @@ export const gameSlice = createSlice({
     },
     setStreakDays: (state, action: PayloadAction<number>) => {
       state.streakDays = Math.max(action.payload, 1);
+    },
+    setStreakArmour: (state, action: PayloadAction<boolean>) => {
+      state.isStreakArmour = action.payload;
     },
   },
 });

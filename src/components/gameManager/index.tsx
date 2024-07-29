@@ -4,6 +4,7 @@ import { AppHabitAction } from '@/lib/schemas';
 import { gameActions } from '@/redux/features/game';
 import {
   selectMultiplier,
+  selectStreakArmour,
   selectStreakDays,
 } from '@/redux/features/game/selectors';
 import { selectActions } from '@/redux/features/habits/selectors';
@@ -99,13 +100,19 @@ const MissedHabitsInnerManager: FC<MissedHabitsInnerManagerProps> = function ({
   let newMultiplier = multiplier;
   const streakDays = useAppSelector((state) => selectStreakDays(state));
   let newStreakDays = streakDays;
+  const armourApplied = useAppSelector((state) => selectStreakArmour(state));
+  let newArmourState = armourApplied;
   let missedCount = 0;
   for (let i = prevStats.length; i < stats.length; i++) {
     const mc = stats[i].missedCount;
     missedCount += mc;
     if (mc) {
-      newMultiplier = 1;
-      newStreakDays = 1;
+      if (!armourApplied) {
+        newMultiplier = 1;
+        newStreakDays = 1;
+      } else {
+        newArmourState = false;
+      }
     } else {
       newMultiplier += 0.1;
       newStreakDays += 1;
@@ -117,6 +124,7 @@ const MissedHabitsInnerManager: FC<MissedHabitsInnerManagerProps> = function ({
       store.dispatch(gameActions.addCoins(-missedCount * 10));
       store.dispatch(gameActions.setMultiplier(newMultiplier));
       store.dispatch(gameActions.setStreakDays(newStreakDays));
+      store.dispatch(gameActions.setStreakArmour(newArmourState));
     }
     return () => {
       ignore = true;

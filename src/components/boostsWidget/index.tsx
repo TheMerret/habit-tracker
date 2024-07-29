@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { Separator } from '@/components/ui/separator';
-import { Card, CardContent, CardHeader } from '../ui/card';
+import { StreakArmour } from '../streakArmour';
 
 export const BoostsWidget: FunctionComponent = function () {
   return (
@@ -13,18 +13,7 @@ export const BoostsWidget: FunctionComponent = function () {
       </div>
       <Separator />
       <div className="flex flex-row flex-wrap">
-        <Card className="max-w-72">
-          <CardHeader>
-            <div className="flex flex-wrap justify-between content-center	">
-              <div className="text-7xl">🛡️</div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <span className="scroll-m-20 text-2xl font-semibold tracking-tight">
-              Сохранение стрика
-            </span>
-          </CardContent>
-        </Card>
+        <StreakArmour />
       </div>
     </div>
   );
