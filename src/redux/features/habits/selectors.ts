@@ -27,6 +27,23 @@ export const selectActions = createSelector(
   selectHabitsModule,
   (module) => module.actions
 );
+
+export const selectActionsFromDate = createSelector(
+  [selectHabitsModule, (_: unknown, dateString: string) => dateString],
+  (module, dateString) => {
+    return module.actions.filter((action) => {
+      const date = new Date(dateString);
+      const dateWithNoTime = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+      const addDate = new Date(action.date);
+      return +dateWithNoTime == +addDate;
+    });
+  }
+);
+
 export const selectAction = createSelector(
   [
     selectHabitsModule,
