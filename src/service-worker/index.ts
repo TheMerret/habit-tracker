@@ -57,7 +57,6 @@ async function notifyMissedHabits() {
           : current
       );
       const lastActionDate = new Date(Date.parse(lastAction.date));
-      console.log(habit.emoji, curDateTime, lastAction);
       if ((+curDateTime - +lastActionDate) / (1000 * 60 * 60 * 24) >= lap) {
         count++;
       }
@@ -85,7 +84,6 @@ async function planNotification() {
       curDateTime.getHours() + 1
     );
     const delay = nextHoursDateTime.valueOf() - curDateTime.valueOf();
-    console.log(`notification will be planned after ${delay} ms`);
     setTimeout(async () => {
       await checkToNotify();
       setInterval(checkToNotify, 1 * 60 * 60 * 1000);

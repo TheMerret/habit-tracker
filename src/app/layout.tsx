@@ -7,7 +7,8 @@ import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { DateTimeProvider } from '@/contexts/date-time';
 import { NotificationManager } from '@/components/notificationManager';
-import { ProgressManager } from '@/components/progressManager';
+import { StatisticsManager } from '@/components/statisticsManager';
+import { GameManager } from '@/components/gameManager';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -59,7 +60,8 @@ export default function RootLayout({
           <div className="p-3 container">{children}</div>
           <DateTimeProvider />
           <NotificationManager />
-          <ProgressManager />
+          <StatisticsManager />
+          <GameManager />
         </StoreProvider>
         <Toaster />
       </body>

@@ -28,7 +28,6 @@ export const statisticsSlice = createSlice({
     ) => {
       if (action.payload.length) {
         state.entries = [...state.entries, ...action.payload];
-        console.log('added');
       }
     },
   },

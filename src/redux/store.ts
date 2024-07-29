@@ -13,11 +13,13 @@ import { habitsReducer } from './features/habits';
 import defaultStorage from 'redux-persist/lib/storage';
 import { dateTimeReducer } from './features/datetime';
 import { statisticsReducer } from './features/statistics';
+import { gameReducer } from './features/game';
 
 const rootReducer = combineReducers({
   habits: habitsReducer,
   dateTime: dateTimeReducer,
   statistics: statisticsReducer,
+  game: gameReducer,
 });
 
 export const makeStore = () => {

@@ -9,9 +9,9 @@ import {
 import { statisticsActions } from '@/redux/features/statistics';
 import { selectStatisticsEntries } from '@/redux/features/statistics/selectors';
 import { useAppSelector, useAppStore } from '@/redux/hooks';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
-export const ProgressManager: FC = function () {
+export const StatisticsManager: FC = function () {
   const statistics = useAppSelector((state) => selectStatisticsEntries(state));
   type Stat = (typeof statistics)[0];
   const habits = useAppSelector((state) => selectActiveHabits(state));
@@ -22,7 +22,8 @@ export const ProgressManager: FC = function () {
   const store = useAppStore();
   const getDateWithNoTime = (d: Date): Date =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  let checkProgressFromDate = getDateWithNoTime(currentDate);
+  const currentDateWithNoTime = getDateWithNoTime(currentDate);
+  let checkProgressFromDate = currentDateWithNoTime;
   if (statistics.length) {
     const lastStatistics = statistics.reduce((prev, cur) =>
       Date.parse(prev.date) > Date.parse(cur.date) ? prev : cur
@@ -33,14 +34,10 @@ export const ProgressManager: FC = function () {
     const earliestHabit = habits.reduce((prev, cur) =>
       Date.parse(prev.addDate) < Date.parse(cur.addDate) ? prev : cur
     );
-    const earliestHabitDate = getDateWithNoTime(
-      new Date(earliestHabit.addDate)
-    );
-    if (+earliestHabitDate == +checkProgressFromDate) {
-      checkProgressFromDate.setHours(12);
-    } else {
-      checkProgressFromDate = earliestHabitDate;
-    }
+    checkProgressFromDate = getDateWithNoTime(new Date(earliestHabit.addDate));
+  }
+  if (+checkProgressFromDate == +currentDateWithNoTime) {
+    checkProgressFromDate.setHours(12);
   }
   const events: Map<string, { isDone: boolean; habitId: AppHabit['id'] }[]> =
     new Map();
@@ -98,6 +95,14 @@ export const ProgressManager: FC = function () {
     }
     newStats.push(stat);
   }
-  store.dispatch(statisticsActions.addStatistics(newStats));
+  useEffect(() => {
+    let ignore = false;
+    if (!ignore) {
+      store.dispatch(statisticsActions.addStatistics(newStats));
+    }
+    return () => {
+      ignore = true;
+    };
+  });
   return <></>;
 };
