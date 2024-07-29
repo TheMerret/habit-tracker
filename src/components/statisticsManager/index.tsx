@@ -75,20 +75,35 @@ export const StatisticsManager: FC = function () {
     }
   }
   const alreadyDoneHabits: Record<AppHabit['id'], boolean> = {};
+  const habitsMapping = habits.reduce(
+    (prev: Record<AppHabit['id'], AppHabit>, cur) => {
+      prev[cur.id] = cur;
+      return prev;
+    },
+    {}
+  );
   const newStats: typeof statistics = [];
   for (const [date, dateEvents] of events.entries()) {
     const stat: Stat = {
       date,
-      doneCount: 0,
-      missedCount: 0,
+      doneCount: {
+        daily: 0,
+        weekly: 0,
+        monthly: 0,
+      },
+      missedCount: {
+        daily: 0,
+        weekly: 0,
+        monthly: 0,
+      },
     };
     for (const { isDone, habitId } of dateEvents) {
       if (isDone) {
         alreadyDoneHabits[habitId] = true;
-        stat.doneCount++;
+        stat.doneCount[habitsMapping[habitId].period]++;
       } else {
         if (!alreadyDoneHabits[habitId]) {
-          stat.missedCount++;
+          stat.missedCount[habitsMapping[habitId].period]++;
         }
         alreadyDoneHabits[habitId] = false;
       }

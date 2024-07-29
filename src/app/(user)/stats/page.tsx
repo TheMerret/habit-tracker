@@ -9,7 +9,7 @@ import {
 
 export default function Statistics() {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <Card>
         <CardHeader>
           <CardTitle>Статистика по периодам</CardTitle>

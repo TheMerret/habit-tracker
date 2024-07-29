@@ -105,7 +105,7 @@ const MissedHabitsInnerManager: FC<MissedHabitsInnerManagerProps> = function ({
   let missedCount = 0;
   for (let i = prevStats.length; i < stats.length; i++) {
     const mc = stats[i].missedCount;
-    missedCount += mc;
+    missedCount += mc.daily + mc.weekly + mc.monthly;
     if (mc) {
       if (!armourApplied) {
         newMultiplier = 1;

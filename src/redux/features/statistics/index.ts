@@ -3,8 +3,16 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 export type StatisticsState = {
   entries: {
     date: string;
-    doneCount: number;
-    missedCount: number;
+    doneCount: {
+      monthly: number;
+      weekly: number;
+      daily: number;
+    };
+    missedCount: {
+      monthly: number;
+      weekly: number;
+      daily: number;
+    };
   }[];
 };
 
