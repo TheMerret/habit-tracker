@@ -11,7 +11,7 @@ import { selectActions } from '@/redux/features/habits/selectors';
 import { StatisticsState } from '@/redux/features/statistics';
 import { selectStatisticsEntries } from '@/redux/features/statistics/selectors';
 import { useAppSelector, useAppStore } from '@/redux/hooks';
-import { FC, useEffect, useRef } from 'react';
+import { FC, memo, useEffect, useRef } from 'react';
 
 export const GameManager: FC = function () {
   return (
@@ -55,15 +55,9 @@ const DoneHabitsInnerManager: FC<DoneHabitsInnerManagerProps> = function ({
   let count = 0;
   count += actions.length - prevActions.length;
   useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
-      store.dispatch(gameActions.addCoins(count * 10 * multiplier));
-      store.dispatch(gameActions.editPetHealth(count * 10));
-    }
-    return () => {
-      ignore = true;
-    };
-  });
+    store.dispatch(gameActions.addCoins(count * 10 * multiplier));
+    store.dispatch(gameActions.editPetHealth(count * 10));
+  }, [actions.length, prevActions.length]);
   return <></>;
 };
 
@@ -97,15 +91,16 @@ const MissedHabitsInnerManager: FC<MissedHabitsInnerManagerProps> = function ({
 }) {
   const store = useAppStore();
   const multiplier = useAppSelector((state) => selectMultiplier(state));
-  let newMultiplier = multiplier;
+  let newMultiplier = multiplier * 10;
   const streakDays = useAppSelector((state) => selectStreakDays(state));
   let newStreakDays = streakDays;
   const armourApplied = useAppSelector((state) => selectStreakArmour(state));
   let newArmourState = armourApplied;
   let missedCount = 0;
   for (let i = prevStats.length; i < stats.length; i++) {
-    const mc = stats[i].missedCount;
-    missedCount += mc.daily + mc.weekly + mc.monthly;
+    const mcObj = stats[i].missedCount;
+    const mc = mcObj.daily + mcObj.monthly + mcObj.weekly;
+    missedCount += mc;
     if (mc) {
       if (!armourApplied) {
         newMultiplier = 1;
@@ -114,21 +109,16 @@ const MissedHabitsInnerManager: FC<MissedHabitsInnerManagerProps> = function ({
         newArmourState = false;
       }
     } else {
-      newMultiplier += 0.1;
+      newMultiplier += 1;
       newStreakDays += 1;
     }
   }
+  newMultiplier /= 10;
   useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
-      store.dispatch(gameActions.addCoins(-missedCount * 10));
-      store.dispatch(gameActions.setMultiplier(newMultiplier));
-      store.dispatch(gameActions.setStreakDays(newStreakDays));
-      store.dispatch(gameActions.setStreakArmour(newArmourState));
-    }
-    return () => {
-      ignore = true;
-    };
-  });
+    store.dispatch(gameActions.addCoins(-missedCount * 10));
+    store.dispatch(gameActions.setMultiplier(newMultiplier));
+    store.dispatch(gameActions.setStreakDays(newStreakDays));
+    store.dispatch(gameActions.setStreakArmour(newArmourState));
+  }, [prevStats.length, stats.length]);
   return <></>;
 };
