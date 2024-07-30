@@ -72,8 +72,8 @@ function categorizeDatesPerVariant(
 
   const categorizedRecord = [...Array(noOfVariants)].map(() => [] as Date[]);
 
-  const minNumber = sortedEntries[0].weight;
-  const maxNumber = sortedEntries[sortedEntries.length - 1].weight;
+  const minNumber = sortedEntries[0]?.weight ?? 0;
+  const maxNumber = sortedEntries[sortedEntries.length - 1]?.weight ?? 0;
   const minNumbersFixed = minNumber == maxNumber ? minNumber - 1 : minNumber;
   const range = (maxNumber - minNumbersFixed) / noOfVariants;
 
